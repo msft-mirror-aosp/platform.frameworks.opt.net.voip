@@ -471,7 +471,7 @@ public final class SipService extends ISipService.Stub {
                 android.Manifest.permission.USE_SIP, message);
 
         return mAppOps.noteOp(AppOpsManager.OP_USE_SIP, Binder.getCallingUid(),
-                packageName) == AppOpsManager.MODE_ALLOWED;
+                packageName, message) == AppOpsManager.MODE_ALLOWED;
     }
 
     private class SipSessionGroupExt extends SipSessionAdapter {
