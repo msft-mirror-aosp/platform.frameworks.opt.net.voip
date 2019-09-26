@@ -37,10 +37,8 @@
 #include <utils/RefBase.h>
 #include <utils/threads.h>
 #include <utils/SystemClock.h>
-#include <media/AudioSystem.h>
 #include <media/AudioRecord.h>
 #include <media/AudioTrack.h>
-#include <media/mediarecorder.h>
 #include <media/AudioEffect.h>
 #include <system/audio_effects/effect_aec.h>
 #include <system/audio.h>
