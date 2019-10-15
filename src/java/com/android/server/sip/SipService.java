@@ -470,7 +470,7 @@ public final class SipService extends ISipService.Stub {
         mContext.enforceCallingOrSelfPermission(
                 android.Manifest.permission.USE_SIP, message);
 
-        return mAppOps.noteOp(AppOpsManager.OP_USE_SIP, Binder.getCallingUid(),
+        return mAppOps.noteOp(AppOpsManager.OPSTR_USE_SIP, Binder.getCallingUid(),
                 packageName, message) == AppOpsManager.MODE_ALLOWED;
     }
 
