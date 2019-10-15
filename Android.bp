@@ -32,5 +32,8 @@ java_library {
     name: "voip-common",
     installable: true,
     srcs: [":opt-net-voip-srcs"],
+    static_libs: [
+        "nist-sip",
+    ],
     required: ["librtp_jni"],
 }
