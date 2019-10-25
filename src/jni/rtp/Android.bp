@@ -26,6 +26,10 @@ cc_library_shared {
         "G711Codec.cpp",
         "GsmCodec.cpp",
     ],
+    header_libs: [
+        "libmedia_headers",
+    ],
+
     shared_libs: [
         "libnativehelper",
         "libcutils",
