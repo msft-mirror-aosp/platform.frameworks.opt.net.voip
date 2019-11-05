@@ -1081,7 +1081,7 @@ public class SipAudioCall {
             // don't create an AudioGroup here; doing so will fail if
             // there's another AudioGroup out there that's active
         } else {
-            if (audioGroup == null) audioGroup = new AudioGroup();
+            if (audioGroup == null) audioGroup = new AudioGroup(mContext);
             stream.join(audioGroup);
         }
         setAudioGroupMode();
