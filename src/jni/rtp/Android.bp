@@ -31,12 +31,13 @@ cc_library_shared {
     ],
 
     shared_libs: [
-        "libnativehelper",
-        "libcutils",
-        "libutils",
-        "liblog",
         "libaudioclient",
+        "libaudiofoundation",
+        "libcutils",
+        "liblog",
+        "libnativehelper",
         "libstagefright_amrnb_common",
+        "libutils",
     ],
     static_libs: [
         "libgsm",
