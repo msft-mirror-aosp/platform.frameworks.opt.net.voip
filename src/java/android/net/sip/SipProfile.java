@@ -480,7 +480,6 @@ public class SipProfile implements Parcelable, Serializable, Cloneable {
 
     /**
      * Sets the calling process's Uid in the sip service.
-     * @hide
      */
     public void setCallingUid(int uid) {
         mCallingUid = uid;
@@ -488,7 +487,8 @@ public class SipProfile implements Parcelable, Serializable, Cloneable {
 
     /**
      * Gets the calling process's Uid in the sip settings.
-     * @hide
+     *
+     * @return the calling process's Uid in the sip settings.
      */
     public int getCallingUid() {
         return mCallingUid;
