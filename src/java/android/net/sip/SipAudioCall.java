@@ -18,6 +18,7 @@ package android.net.sip;
 
 import android.annotation.NonNull;
 import android.annotation.Nullable;
+import android.annotation.SystemApi;
 import android.content.Context;
 import android.media.AudioManager;
 import android.net.rtp.AudioCodec;
@@ -960,7 +961,9 @@ public class SipAudioCall {
      * @return the {@link AudioGroup} object or null if the RTP stream has not
      *      yet been set up
      * @see #getAudioStream
+     * @hide
      */
+    @SystemApi
     public @Nullable AudioGroup getAudioGroup() {
         synchronized (mLock) {
             if (mAudioGroup != null) return mAudioGroup;
@@ -978,7 +981,9 @@ public class SipAudioCall {
      * settings of the first object (that merges others) override others'.
      *
      * @see #getAudioStream
+     * @hide
      */
+    @SystemApi
     public void setAudioGroup(@NonNull AudioGroup group) {
         synchronized (mLock) {
             if (DBG) log("setAudioGroup: group=" + group);

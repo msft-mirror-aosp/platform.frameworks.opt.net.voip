@@ -18,6 +18,7 @@ package android.net.sip;
 
 import android.annotation.NonNull;
 import android.annotation.SdkConstant;
+import android.annotation.SystemApi;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -86,15 +87,19 @@ public class SipManager {
 
     /**
      * Intent action sent when the SipManager becomes available.
+     * @hide
      */
     @SdkConstant(SdkConstant.SdkConstantType.BROADCAST_INTENT_ACTION)
+    @SystemApi
     public static final String ACTION_SIP_SERVICE_UP =
             "android.net.sip.action.SIP_SERVICE_UP";
 
     /**
      * Intent action sent when there is a new incoming SIP call.
+     * @hide
      */
     @SdkConstant(SdkConstant.SdkConstantType.BROADCAST_INTENT_ACTION)
+    @SystemApi
     public static final String ACTION_SIP_INCOMING_CALL =
             "android.net.sip.action.SIP_INCOMING_CALL";
 
@@ -108,23 +113,29 @@ public class SipManager {
 
     /**
      * Intent action sent when a SIP profile has been removed.
+     * @hide
      */
     @SdkConstant(SdkConstant.SdkConstantType.BROADCAST_INTENT_ACTION)
+    @SystemApi
     public static final String ACTION_SIP_REMOVE_PROFILE =
             "android.net.sip.action.SIP_REMOVE_PROFILE";
 
     /**
      * Intent action sent when the SIP accounts or other configuration has changed.
      * This should trigger a re-registration of the SIP PhoneAccounts.
+     * @hide
      */
     @SdkConstant(SdkConstant.SdkConstantType.BROADCAST_INTENT_ACTION)
+    @SystemApi
     public static final String ACTION_SIP_CALL_OPTION_CHANGED =
             "android.net.sip.action.SIP_CALL_OPTION_CHANGED";
 
     /**
      * Intent action used by Telephony to start the SIP service after about.
+     * @hide
      */
     @SdkConstant(SdkConstant.SdkConstantType.BROADCAST_INTENT_ACTION)
+    @SystemApi
     public static final String ACTION_START_SIP =
             "android.net.sip.action.START_SIP";
 
@@ -610,13 +621,15 @@ public class SipManager {
     /**
      * Gets the list of profiles hosted by the SIP service. The user information
      * (username, password and display name) are crossed out.
+     * @hide
      */
-    public @NonNull List<SipProfile> getListOfProfiles() throws SipException {
+    @SystemApi
+    public @NonNull List<SipProfile> getProfiles() throws SipException {
         try {
             checkSipServiceConnection();
-            return mSipService.getListOfProfiles(mContext.getOpPackageName());
+            return mSipService.getProfiles(mContext.getOpPackageName());
         } catch (RemoteException e) {
-            return new ArrayList<>();
+            throw new SipException(e.getMessage());
         }
     }
 
