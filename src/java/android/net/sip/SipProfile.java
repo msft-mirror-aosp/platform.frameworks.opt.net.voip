@@ -16,6 +16,7 @@
 
 package android.net.sip;
 
+import android.annotation.SystemApi;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -489,7 +490,9 @@ public class SipProfile implements Parcelable, Serializable, Cloneable {
      * Gets the calling process's Uid in the sip settings.
      *
      * @return the calling process's Uid in the sip settings.
+     * @hide
      */
+    @SystemApi
     public int getCallingUid() {
         return mCallingUid;
     }

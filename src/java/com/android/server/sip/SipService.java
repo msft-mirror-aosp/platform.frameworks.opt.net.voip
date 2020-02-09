@@ -129,9 +129,10 @@ public final class SipService extends ISipService.Stub {
     }
 
     @Override
-    public synchronized List<SipProfile> getListOfProfiles(String opPackageName) {
-        if (!canUseSip(opPackageName, "getListOfProfiles")) {
-            return new ArrayList<>();
+    public synchronized List<SipProfile> getProfiles(String opPackageName) throws RemoteException {
+        if (!canUseSip(opPackageName, "getProfiles")) {
+            throw new RemoteException(String.format("Package %s cannot use Sip service",
+                    opPackageName));
         }
         boolean isCallerRadio = isCallerRadio();
         ArrayList<SipProfile> profiles = new ArrayList<>();
