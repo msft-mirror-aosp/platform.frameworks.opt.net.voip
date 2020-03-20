@@ -16,7 +16,7 @@
 
 package android.net.rtp;
 
-import android.annotation.Nullable;
+import android.annotation.NonNull;
 import android.app.ActivityThread;
 import android.content.Context;
 import android.media.AudioManager;
@@ -114,10 +114,9 @@ public class AudioGroup {
 
     /**
      * Creates an empty AudioGroup.
-     * @param context Context used to get package name. If context is null, app ops checks will
-     * fail and as a result {@link AudioStream#join(AudioGroup)} may fail.
+     * @param context Context used to get package name
      */
-    public AudioGroup(@Nullable Context context) {
+    public AudioGroup(@NonNull Context context) {
         mContext = context;
         mStreams = new HashMap<AudioStream, Long>();
     }
@@ -168,7 +167,8 @@ public class AudioGroup {
                 long id = nativeAdd(stream.getMode(), stream.getSocket(),
                         stream.getRemoteAddress().getHostAddress(),
                         stream.getRemotePort(), codecSpec, stream.getDtmfType(),
-                        mContext != null ? mContext.getOpPackageName() : null);
+                        mContext != null ? mContext.getOpPackageName()
+                                : ActivityThread.currentOpPackageName());
                 mStreams.put(stream, id);
             } catch (NullPointerException e) {
                 throw new IllegalStateException(e);
