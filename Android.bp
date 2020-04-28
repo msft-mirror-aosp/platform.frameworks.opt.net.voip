@@ -15,10 +15,8 @@
 filegroup {
     name: "opt-net-voip-srcs",
     srcs: [
-        "src/java/**/*.java",
-        "src/java/**/I*.aidl",
+        "src/java/android/net/**/*.java",
     ],
-    path: "src/java",
 }
 
 filegroup {
@@ -31,9 +29,14 @@ filegroup {
 java_library {
     name: "voip-common",
     installable: true,
-    srcs: [":opt-net-voip-srcs"],
-    static_libs: [
-        "nist-sip",
+    srcs: [
+        "src/java/**/*.java",
+        "src/java/**/I*.aidl",
     ],
+    aidl: {
+        local_include_dirs: [
+            "src/java",
+        ],
+    },
     required: ["librtp_jni"],
 }
