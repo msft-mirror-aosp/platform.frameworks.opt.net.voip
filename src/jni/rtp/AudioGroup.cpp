@@ -819,6 +819,10 @@ bool AudioGroup::DeviceThread::threadLoop()
     // Initialize AudioTrack and AudioRecord.
     sp<AudioTrack> track = new AudioTrack();
     sp<AudioRecord> record = new AudioRecord(mGroup->mOpPackageName);
+    // Set caller name so it can be logged in destructor.
+    // MediaMetricsConstants.h: AMEDIAMETRICS_PROP_CALLERNAME_VALUE_RTP
+    track->setCallerName("rtp");
+    record->setCallerName("rtp");
     if (track->set(AUDIO_STREAM_VOICE_CALL, sampleRate, AUDIO_FORMAT_PCM_16_BIT,
                 AUDIO_CHANNEL_OUT_MONO, output, AUDIO_OUTPUT_FLAG_NONE, NULL /*callback_t*/,
                 NULL /*user*/, 0 /*notificationFrames*/, 0 /*sharedBuffer*/,
