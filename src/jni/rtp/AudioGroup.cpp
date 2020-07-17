@@ -57,7 +57,16 @@ namespace {
 
 using namespace android;
 
+using media::permission::Identity;
+
 int gRandom = -1;
+
+static struct {
+    jfieldID  fieldUid;            // Identity.uid
+    jfieldID  fieldPid;            // Identity.pid
+    jfieldID  fieldPackageName;    // Identity.packageName
+    jfieldID  fieldAttributionTag; // Identity.attributionTag
+} javaIdentityFields;
 
 // We use a circular array to implement jitter buffer. The simplest way is doing
 // a modulo operation on the index while accessing the array. However modulo can
@@ -480,7 +489,7 @@ void AudioStream::decode(int tick)
 class AudioGroup
 {
 public:
-    explicit AudioGroup(const String16 &opPackageName);
+    explicit AudioGroup(const Identity &identity);
     ~AudioGroup();
     bool set(int sampleRate, int sampleCount);
 
@@ -505,7 +514,7 @@ private:
     int mEventQueue;
     volatile int mDtmfEvent;
 
-    String16 mOpPackageName;
+    Identity mIdentity;
 
     int mMode;
     int mSampleRate;
@@ -554,9 +563,9 @@ private:
     sp<DeviceThread> mDeviceThread;
 };
 
-AudioGroup::AudioGroup(const String16 &opPackageName)
+AudioGroup::AudioGroup(const Identity &identity)
 {
-    mOpPackageName = opPackageName;
+    mIdentity = identity;
     mMode = ON_HOLD;
     mChain = NULL;
     mEventQueue = -1;
@@ -818,7 +827,7 @@ bool AudioGroup::DeviceThread::threadLoop()
 
     // Initialize AudioTrack and AudioRecord.
     sp<AudioTrack> track = new AudioTrack();
-    sp<AudioRecord> record = new AudioRecord(mGroup->mOpPackageName);
+    sp<AudioRecord> record = new AudioRecord(mGroup->mIdentity);
     // Set caller name so it can be logged in destructor.
     // MediaMetricsConstants.h: AMEDIAMETRICS_PROP_CALLERNAME_VALUE_RTP
     track->setCallerName("rtp");
@@ -851,7 +860,7 @@ bool AudioGroup::DeviceThread::threadLoop()
     sp<AudioEffect> aec;
     if (mode == ECHO_SUPPRESSION) {
         if (mGroup->platformHasAec()) {
-            aec = new AudioEffect(mGroup->mOpPackageName);
+            aec = new AudioEffect(mGroup->mIdentity);
             aec->set(FX_IID_AEC,
                      NULL,
                      0,
@@ -953,7 +962,7 @@ static jfieldID gMode;
 
 jlong add(JNIEnv *env, jobject thiz, jint mode,
     jint socket, jstring jRemoteAddress, jint remotePort,
-    jstring jCodecSpec, jint dtmfType, jstring opPackageNameStr)
+    jstring jCodecSpec, jint dtmfType, jobject jIdentity)
 {
     AudioCodec *codec = NULL;
     AudioStream *stream = NULL;
@@ -981,7 +990,25 @@ jlong add(JNIEnv *env, jobject thiz, jint mode,
         return 0;
     }
 
-    ScopedUtfChars opPackageName(env, opPackageNameStr);
+    Identity identity;
+    identity.uid = env->GetIntField(jIdentity, javaIdentityFields.fieldUid);
+    identity.pid = env->GetIntField(jIdentity, javaIdentityFields.fieldPid);
+    jstring packageNameStr = static_cast<jstring>(
+            env->GetObjectField(jIdentity, javaIdentityFields.fieldPackageName));
+    if (packageNameStr == NULL) {
+        identity.packageName = std::nullopt;
+    } else {
+        identity.packageName = std::optional<std::string>(
+                std::string(ScopedUtfChars(env, packageNameStr).c_str()));
+    }
+    jstring attributionTagStr = static_cast<jstring>(
+            env->GetObjectField(jIdentity, javaIdentityFields.fieldAttributionTag));
+    if (attributionTagStr == NULL) {
+        identity.attributionTag = std::nullopt;
+    } else {
+        identity.attributionTag = std::optional<std::string>(
+                std::string(ScopedUtfChars(env, attributionTagStr).c_str()));
+    }
 
     // Create audio codec.
     int codecType = -1;
@@ -1012,7 +1039,7 @@ jlong add(JNIEnv *env, jobject thiz, jint mode,
     group = (AudioGroup *)env->GetLongField(thiz, gNative);
     if (!group) {
         int mode = env->GetIntField(thiz, gMode);
-        group = new AudioGroup(String16(opPackageName.c_str()));
+        group = new AudioGroup(identity);
         if (!group->set(8000, 256) || !group->setMode(mode)) {
             jniThrowException(env, "java/lang/IllegalStateException",
                 "cannot initialize audio group");
@@ -1068,7 +1095,7 @@ void sendDtmf(JNIEnv *env, jobject thiz, jint event)
 }
 
 JNINativeMethod gMethods[] = {
-    {"nativeAdd", "(IILjava/lang/String;ILjava/lang/String;ILjava/lang/String;)J", (void *)add},
+    {"nativeAdd", "(IILjava/lang/String;ILjava/lang/String;ILandroid/media/permission/Identity;)J", (void *)add},
     {"nativeRemove", "(J)V", (void *)remove},
     {"nativeSetMode", "(I)V", (void *)setMode},
     {"nativeSendDtmf", "(I)V", (void *)sendDtmf},
@@ -1092,5 +1119,17 @@ int registerAudioGroup(JNIEnv *env)
         ALOGE("JNI registration failed");
         return -1;
     }
+
+    // Get the Identity class and fields
+    jclass identityClass = env->FindClass("android/media/permission/Identity");
+    javaIdentityFields.fieldUid =
+            env->GetFieldID(identityClass, "uid", "I");
+    javaIdentityFields.fieldPid =
+            env->GetFieldID(identityClass, "pid", "I");
+    javaIdentityFields.fieldPackageName =
+            env->GetFieldID(identityClass, "packageName", "Ljava/lang/String;");
+    javaIdentityFields.fieldAttributionTag =
+            env->GetFieldID(identityClass, "attributionTag", "Ljava/lang/String;");
+
     return 0;
 }
