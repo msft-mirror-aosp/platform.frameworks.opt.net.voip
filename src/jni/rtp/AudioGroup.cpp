@@ -851,14 +851,14 @@ bool AudioGroup::DeviceThread::threadLoop()
     sp<AudioEffect> aec;
     if (mode == ECHO_SUPPRESSION) {
         if (mGroup->platformHasAec()) {
-            aec = new AudioEffect(FX_IID_AEC,
-                                    mGroup->mOpPackageName,
-                                    NULL,
-                                    0,
-                                    0,
-                                    0,
-                                    record->getSessionId(),
-                                    AUDIO_IO_HANDLE_NONE); // record sessionId is sufficient.
+            aec = new AudioEffect(mGroup->mOpPackageName);
+            aec->set(FX_IID_AEC,
+                     NULL,
+                     0,
+                     0,
+                     0,
+                     record->getSessionId(),
+                     AUDIO_IO_HANDLE_NONE); // record sessionId is sufficient.
             status_t status = aec->initCheck();
             if (status == NO_ERROR || status == ALREADY_EXISTS) {
                 aec->setEnabled(true);
