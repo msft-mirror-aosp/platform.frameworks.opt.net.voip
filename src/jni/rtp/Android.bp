@@ -28,6 +28,7 @@ cc_library_shared {
     ],
     header_libs: [
         "libmedia_headers",
+        "libmediametrics_headers",
     ],
 
     shared_libs: [

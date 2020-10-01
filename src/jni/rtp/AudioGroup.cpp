@@ -819,6 +819,10 @@ bool AudioGroup::DeviceThread::threadLoop()
     // Initialize AudioTrack and AudioRecord.
     sp<AudioTrack> track = new AudioTrack();
     sp<AudioRecord> record = new AudioRecord(mGroup->mOpPackageName);
+    // Set caller name so it can be logged in destructor.
+    // MediaMetricsConstants.h: AMEDIAMETRICS_PROP_CALLERNAME_VALUE_RTP
+    track->setCallerName("rtp");
+    record->setCallerName("rtp");
     if (track->set(AUDIO_STREAM_VOICE_CALL, sampleRate, AUDIO_FORMAT_PCM_16_BIT,
                 AUDIO_CHANNEL_OUT_MONO, output, AUDIO_OUTPUT_FLAG_NONE, NULL /*callback_t*/,
                 NULL /*user*/, 0 /*notificationFrames*/, 0 /*sharedBuffer*/,
@@ -847,14 +851,14 @@ bool AudioGroup::DeviceThread::threadLoop()
     sp<AudioEffect> aec;
     if (mode == ECHO_SUPPRESSION) {
         if (mGroup->platformHasAec()) {
-            aec = new AudioEffect(FX_IID_AEC,
-                                    mGroup->mOpPackageName,
-                                    NULL,
-                                    0,
-                                    0,
-                                    0,
-                                    record->getSessionId(),
-                                    AUDIO_IO_HANDLE_NONE); // record sessionId is sufficient.
+            aec = new AudioEffect(mGroup->mOpPackageName);
+            aec->set(FX_IID_AEC,
+                     NULL,
+                     0,
+                     0,
+                     0,
+                     record->getSessionId(),
+                     AUDIO_IO_HANDLE_NONE); // record sessionId is sufficient.
             status_t status = aec->initCheck();
             if (status == NO_ERROR || status == ALREADY_EXISTS) {
                 aec->setEnabled(true);
