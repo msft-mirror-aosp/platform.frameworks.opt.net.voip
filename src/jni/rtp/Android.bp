@@ -45,10 +45,6 @@ cc_library_shared {
         "libstagefright_amrnbdec",
         "libstagefright_amrnbenc",
     ],
-    include_dirs: [
-        "frameworks/av/media/libstagefright/codecs/amrnb/enc/src",
-        "frameworks/av/media/libstagefright/codecs/amrnb/dec/src",
-    ],
     cflags: [
         "-fvisibility=hidden",
         "-Wall",
