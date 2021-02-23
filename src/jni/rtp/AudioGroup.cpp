@@ -422,16 +422,14 @@ void AudioStream::decode(int tick)
             return;
         }
         int offset = 12 + ((buffer[0] & 0x0F) << 2);
-        if (offset+2 >= bufferSize) {
+        // length is guaranteed to be <= buffersize, so it is safe with respect
+        // buffer overflow testing as well as offset into uninitialized buffer
+        if (offset + 2 + (int)sizeof(uint16_t) > length) {
             ALOGV("invalid buffer offset: %d", offset+2);
             return;
         }
         if ((buffer[0] & 0x10) != 0) {
             offset += 4 + (ntohs(*(uint16_t *)&buffer[offset + 2]) << 2);
-        }
-        if (offset >= bufferSize) {
-            ALOGV("invalid buffer offset: %d", offset);
-            return;
         }
         if ((buffer[0] & 0x20) != 0) {
             length -= buffer[length - 1];
