@@ -63,6 +63,9 @@ import java.util.Map;
  * the AudioGroups is in use.</p>
  *
  * @see AudioStream
+ *
+ * @deprecated {@link android.net.sip.SipManager} and associated classes are no longer supported and
+ * should not be used as the basis of future VOIP apps.
  */
 public class AudioGroup {
     /**
