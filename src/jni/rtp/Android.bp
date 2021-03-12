@@ -43,6 +43,7 @@ cc_library_shared {
         "libnativehelper",
         "libstagefright_amrnb_common",
         "libutils",
+        "media_permission-aidl-cpp",
     ],
     static_libs: [
         "libgsm",
