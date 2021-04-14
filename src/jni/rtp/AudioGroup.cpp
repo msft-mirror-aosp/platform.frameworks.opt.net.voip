@@ -1103,7 +1103,7 @@ JNINativeMethod gMethods[] = {
 
 int registerAudioGroup(JNIEnv *env)
 {
-    gRandom = open("/dev/urandom", O_RDONLY);
+    gRandom = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
     if (gRandom == -1) {
         ALOGE("urandom: %s", strerror(errno));
         return -1;
