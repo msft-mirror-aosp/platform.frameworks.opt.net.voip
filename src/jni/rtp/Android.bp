@@ -36,17 +36,20 @@ cc_library_shared {
     ],
 
     shared_libs: [
+        "libandroid_runtime",
         "libaudioclient",
         "libaudiofoundation",
+        "libbinder",
         "libcutils",
         "liblog",
         "libnativehelper",
+        "libpermission",
         "libstagefright_amrnb_common",
         "libutils",
-        "media_permission-aidl-cpp",
     ],
     static_libs: [
         "libgsm",
+        "libpermission",
         "libstagefright_amrnbdec",
         "libstagefright_amrnbenc",
     ],
