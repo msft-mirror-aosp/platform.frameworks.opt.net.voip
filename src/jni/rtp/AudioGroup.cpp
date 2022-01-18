@@ -903,8 +903,8 @@ bool AudioGroup::DeviceThread::threadLoop()
                 status_t status = track->obtainBuffer(&buffer, 1);
                 if (status == NO_ERROR) {
                     int offset = sampleCount - toWrite;
-                    memcpy(buffer.i8, &output[offset], buffer.size);
-                    toWrite -= buffer.frameCount;
+                    memcpy(buffer.data(), &output[offset], buffer.size());
+                    toWrite -= buffer.getFrameCount();
                     track->releaseBuffer(&buffer);
                 } else if (status != TIMED_OUT && status != WOULD_BLOCK) {
                     ALOGE("cannot write to AudioTrack");
@@ -919,8 +919,8 @@ bool AudioGroup::DeviceThread::threadLoop()
                 status_t status = record->obtainBuffer(&buffer, 1);
                 if (status == NO_ERROR) {
                     int offset = sampleCount - toRead;
-                    memcpy(&input[offset], buffer.i8, buffer.size);
-                    toRead -= buffer.frameCount;
+                    memcpy(&input[offset], buffer.data(), buffer.size());
+                    toRead -= buffer.getFrameCount();
                     record->releaseBuffer(&buffer);
                 } else if (status != TIMED_OUT && status != WOULD_BLOCK) {
                     ALOGE("cannot read from AudioRecord");
