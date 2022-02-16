@@ -426,14 +426,16 @@ void AudioStream::decode(int tick)
             return;
         }
         int offset = 12 + ((buffer[0] & 0x0F) << 2);
-        // length is guaranteed to be <= buffersize, so it is safe with respect
-        // buffer overflow testing as well as offset into uninitialized buffer
-        if (offset + 2 + (int)sizeof(uint16_t) > length) {
+        if (offset+2 >= bufferSize) {
             ALOGV("invalid buffer offset: %d", offset+2);
             return;
         }
         if ((buffer[0] & 0x10) != 0) {
             offset += 4 + (ntohs(*(uint16_t *)&buffer[offset + 2]) << 2);
+        }
+        if (offset >= bufferSize) {
+            ALOGV("invalid buffer offset: %d", offset);
+            return;
         }
         if ((buffer[0] & 0x20) != 0) {
             length -= buffer[length - 1];
@@ -826,13 +828,13 @@ bool AudioGroup::DeviceThread::threadLoop()
     track->setCallerName("rtp");
     record->setCallerName("rtp");
     if (track->set(AUDIO_STREAM_VOICE_CALL, sampleRate, AUDIO_FORMAT_PCM_16_BIT,
-                AUDIO_CHANNEL_OUT_MONO, output, AUDIO_OUTPUT_FLAG_NONE, nullptr /*callback*/,
-                0 /*notificationFrames*/, 0 /*sharedBuffer*/,
+                AUDIO_CHANNEL_OUT_MONO, output, AUDIO_OUTPUT_FLAG_NONE, NULL /*callback_t*/,
+                NULL /*user*/, 0 /*notificationFrames*/, 0 /*sharedBuffer*/,
                 false /*threadCanCallJava*/, AUDIO_SESSION_ALLOCATE,
                 AudioTrack::TRANSFER_OBTAIN) != NO_ERROR ||
             record->set(AUDIO_SOURCE_VOICE_COMMUNICATION, sampleRate, AUDIO_FORMAT_PCM_16_BIT,
-                AUDIO_CHANNEL_IN_MONO, input, nullptr /*callback*/, 0 /*notificationFrames*/,
-                false /*threadCanCallJava*/, AUDIO_SESSION_ALLOCATE,
+                AUDIO_CHANNEL_IN_MONO, input, NULL /*callback_t*/, NULL /*user*/,
+                0 /*notificationFrames*/, false /*threadCanCallJava*/, AUDIO_SESSION_ALLOCATE,
                 AudioRecord::TRANSFER_OBTAIN) != NO_ERROR) {
         ALOGE("cannot initialize audio device");
         return false;
