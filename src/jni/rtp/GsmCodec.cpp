@@ -16,7 +16,9 @@
 
 #include "AudioCodec.h"
 
+extern "C" {
 #include "gsm.h"
+}
 
 namespace {
 

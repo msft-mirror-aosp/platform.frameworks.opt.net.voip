@@ -22,8 +22,6 @@ package android.net.sip;
  * {@link SipSession.Listener#onError onError()},
  * {@link SipSession.Listener#onCallChangeFailed onCallChangeFailed()} and
  * {@link SipSession.Listener#onRegistrationFailed onRegistrationFailed()}.
- * @deprecated {@link android.net.sip.SipManager} and associated classes are no longer supported and
- * should not be used as the basis of future VOIP apps.
  */
 public class SipErrorCode {
     /** Not an error. */
