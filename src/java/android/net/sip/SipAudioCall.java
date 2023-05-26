@@ -68,7 +68,7 @@ public class SipAudioCall {
     private static final int TRANSFER_TIMEOUT = 15; // in seconds
 
     /** Listener for events relating to a SIP call, such as when a call is being
-     * recieved ("on ringing") or a call is outgoing ("on calling").
+     * received ("on ringing") or a call is outgoing ("on calling").
      * <p>Many of these events are also received by {@link SipSession.Listener}.</p>
      */
     public static class Listener {
