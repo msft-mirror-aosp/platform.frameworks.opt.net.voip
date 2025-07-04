@@ -161,7 +161,7 @@ void EchoSuppressor::run(int16_t *playbacked, int16_t *recorded)
     }
 
     // Compute correlations.
-    int latency = 0;
+    [[maybe_unused]] int latency = 0;
     float corr2 = 0.0f;
     float varX = 0.0f;
     float varY = mY2Sum - mWeight * mYSum * mYSum;
