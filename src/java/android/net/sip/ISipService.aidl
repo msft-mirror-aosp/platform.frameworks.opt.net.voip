@@ -22,7 +22,7 @@ import android.net.sip.ISipSessionListener;
 import android.net.sip.SipProfile;
 
 /**
- * {@hide}
+ * @hide
  */
 interface ISipService {
     void open(in SipProfile localProfile, String opPackageName);
